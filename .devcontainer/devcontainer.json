@@ -4,6 +4,11 @@
 		"dockerfile": "Dockerfile"
 	},
 	"features": {
-		"ghcr.io/devcontainers/features/go:1": {}
+		"ghcr.io/devcontainers/features/go:1": {},
+		"ghcr.io/devcontainers/features/python:1": {
+			"toolsToInstall": [
+				"cloudsmith-cli"
+			]
+		}
 	}
 }

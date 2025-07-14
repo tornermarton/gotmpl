@@ -74,7 +74,7 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X main.version={{.Version}}
+      - -s -w -X main.version={{ .Version }} -X main.commit={{ .Commit }} -X main.treeState={{ .IsGitDirty }} -X main.date={{ .CommitDate }}
     mod_timestamp: "{{ .CommitTimestamp }}"
 
   # --- NFPM builds (only to build packages, not archived) --- #

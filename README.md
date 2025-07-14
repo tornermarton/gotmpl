@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/gotmpl/gotmpl/releases"><img src="https://img.shields.io/github/v/release/gotmpl/gotml?logo=semver&label=Release" alt="Releases" align="center" /></a>
+  <a href="https://github.com/gotmpl/gotmpl/releases"><img src="https://img.shields.io/github/v/release/gotmpl/gotmpl?logo=semver&label=Release" alt="Releases" align="center" /></a>
   &nbsp
-  <a href="https://github.com/gotmpl/gotmpl/actions"><img src="https://img.shields.io/github/check-runs/tornermarton/gotmpl/master?logo=github&label=CI" alt="CI" align="center" /></a>
+  <a href="https://github.com/gotmpl/gotmpl/actions"><img src="https://img.shields.io/github/check-runs/gotmpl/gotmpl/master?logo=github&label=CI" alt="CI" align="center" /></a>
   &nbsp
   <a href="https://go.dev"><img src="https://img.shields.io/github/go-mod/go-version/gotmpl/gotmpl?logo=go" alt="Go Version" align="center" /></a>
 </p>
@@ -34,7 +34,42 @@
 
 TODO
 
+```shell
+goreleaser release --clean --snapshot --skip=publish
+
+find . -type f -name "*.apk" | while IFS= read -r file; do
+  CLOUDSMITH_API_KEY=[redacted] cloudsmith push alpine gotmpl/gotmpl-test/alpine/any-version "$file"
+done
+
+find . -type f -name "*.deb" | while IFS= read -r file; do
+  CLOUDSMITH_API_KEY=[redacted] cloudsmith push deb gotmpl/gotmpl-test/any-distro/any-version "$file"
+done
+
+find . -type f -name "*.rpm" | while IFS= read -r file; do
+  CLOUDSMITH_API_KEY=[redacted] cloudsmith push rpm gotmpl/gotmpl-test/any-distro/any-version "$file"
+done
+```
+
 ## Installation
+
+### Install from Package Managers
+
+#### apk (Alpine)
+
+```shell
+apk add --no-cache bash curl && curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl-test/setup.alpine.sh' | bash
+apk add --no-cache gotmpl
+```
+
+TODO: add command without curl???
+
+#### apt (Debian)
+
+TODO
+
+#### yum (RHEL)
+
+TODO
 
 ### Install from GitHub
 
@@ -77,7 +112,7 @@ Check out the latest improvements in our [release notes][changelog].
 
 Before creating your changes please read through our [contributing guidelines][contributing] to learn about our submission process, coding rules, and more.
 
----
+<br>
 
 <p align="center">
   :star: Love the tool? Give this repo a star :star:

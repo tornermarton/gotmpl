@@ -1,0 +1,75 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: git --version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: "go.mod"
+
+      - run: go version
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.9.1
+
+      - run: cosign version
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0.20.2
+
+      - run: syft version
+
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: "goreleaser"
+          version: "~> v2"
+          install-only: true
+
+      - run: goreleaser --version
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - run: python --version
+
+      - name: Install Cloudsmith CLI
+        uses: cloudsmith-io/cloudsmith-cli-action@v1.0.3
+        with:
+          api-key: ${{ secrets.CLOUDSMITH_API_KEY }}
+
+      - run: cloudsmith --version
+
+      - run: goreleaser check
+      - run: goreleaser healthcheck
+
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: goreleaser release --clean
+
+      - name: Publish
+        env:
+          CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
+        run: |
+          find . -type f -name "*.apk" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push alpine --republish gotmpl/gotmpl-test/alpine/any-version "$1"' _ {}
+          find . -type f -name "*.deb" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push deb --republish gotmpl/gotmpl-test/any-distro/any-version "$1"' _ {}
+          find . -type f -name "*.rpm" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push rpm --republish gotmpl/gotmpl-test/any-distro/any-version "$1"' _ {}
