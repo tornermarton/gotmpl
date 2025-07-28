@@ -30,78 +30,8 @@
 
 <br>
 
-## Features
+## Documentation
 
-TODO
-
-```shell
-goreleaser release --clean --snapshot --skip=publish
-
-find . -type f -name "*.apk" | while IFS= read -r file; do
-  CLOUDSMITH_API_KEY=[redacted] cloudsmith push alpine gotmpl/gotmpl-test/alpine/any-version "$file"
-done
-
-find . -type f -name "*.deb" | while IFS= read -r file; do
-  CLOUDSMITH_API_KEY=[redacted] cloudsmith push deb gotmpl/gotmpl-test/any-distro/any-version "$file"
-done
-
-find . -type f -name "*.rpm" | while IFS= read -r file; do
-  CLOUDSMITH_API_KEY=[redacted] cloudsmith push rpm gotmpl/gotmpl-test/any-distro/any-version "$file"
-done
-```
-
-## Installation
-
-### Install from Package Managers
-
-#### apk (Alpine)
-
-```shell
-apk add --no-cache bash curl && curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl-test/setup.alpine.sh' | bash
-apk add --no-cache gotmpl
-```
-
-TODO: add command without curl???
-
-#### apt (Debian)
-
-TODO
-
-#### yum (RHEL)
-
-TODO
-
-### Install from GitHub
-
-Linux:
-
-```shell
-VERSION=1.0.0 ARCH=amd64; wget -O - https://github.com/gotmpl/gotmpl/releases/download/$VERSION/gotmpl-$VERSION-linux-$ARCH.tar.gz | tar xzf - -C /usr/local/bin
-```
-
-Linux (alpine):
-
-```shell
-VERSION=1.0.0 ARCH=amd64; wget -O - https://github.com/gotmpl/gotmpl/releases/download/$VERSION/gotmpl-$VERSION-linux-$ARCH-musl.tar.gz | tar xzf - -C /usr/local/bin
-```
-
-### Install from Docker
-
-TODO
-
-## Usage
-
-TODO
-
-### Examples
-
-TODO
-
-## Platforms
-
-https://www.debian.org/ports/
-
-https://wiki.alpinelinux.org/wiki/Architecture
 TODO
 
 ## Changelog
