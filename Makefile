@@ -27,3 +27,6 @@ build: clean ## Build gotmpl binary.
 
 install: clean ## Install gotmpl binary.
 	go install -ldflags "$(LDFLAGS)"
+
+changelog: ## Generate changelog.
+	git cliff -c .cliff/cliff.yaml -o CHANGELOG.md

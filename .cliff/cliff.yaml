@@ -12,10 +12,6 @@ git:
       group: perf
   filter_commits: true
   tag_pattern: "v*"
-# remote:
-#   github:
-#     owner: tornermarton
-#     repo: gotmpl
 changelog:
   header: null
   body: |
@@ -59,16 +55,19 @@ changelog:
       {# - #}
       <!-- {{ version }} -->
       {# - #}
+      # {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
       {# - #}
       {%- if previous.version -%}
-        # [{{ version | trim_start_matches(pat="v") }}]({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}) ({{ timestamp | date(format="%Y-%m-%d") }})
-      {%- else -%}
-        # {{ version | trim_start_matches(pat="v") }} ({{ timestamp | date(format="%Y-%m-%d") }})
+      {# - #}
+      >[!NOTE]
+      >This is a list of all notable improvements in this release, if you are interested you can browse the full changelog [here]({{ self::remote_url() }}/compare/{{ previous.version }}..{{ version }}).
+      {# - #}
       {%- endif -%}
       {# - #}
-      {# - #}
       {%- if n_breaking_commits > 0 -%}
+        {# - #}
         ## Breaking Changes
+        {# - #}
       {%- endif -%}
       {%- for commit in breaking_commits -%}
         {%- if not commit.scope -%}
@@ -76,7 +75,7 @@ changelog:
           {# - #}
         {%- endif -%}
       {%- endfor -%}
-      {%- for group, commits in breaking_commits | group_by(attribute="group") -%}
+      {%- for group, commits in breaking_commits | group_by(attribute="scope") -%}
         {# - #}
         ### {{ group }}
         {# - #}
@@ -87,7 +86,7 @@ changelog:
         {# - #}
       {%- endfor -%}
       {# - #}
-      ## Changelog
+      ## Changes
       {# - #}
       {%- if n_commits > n_scoped_commits -%}
         {# - #}
