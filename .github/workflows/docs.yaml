@@ -1,0 +1,51 @@
+name: docs
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+concurrency:
+  group: docs
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: git --version
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - run: python --version
+
+      - name: Install Python Dependencies
+        run: pip install mkdocs mkdocs-material mkdocs-material-extensions
+
+      - run: mkdocs --version
+
+      - name: Build
+        run: make docs
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'site'
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4

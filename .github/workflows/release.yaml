@@ -10,7 +10,7 @@ permissions:
   id-token: write
 
 jobs:
-  check:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Go
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version-file: "go.mod"
@@ -45,7 +45,8 @@ jobs:
 
       - run: goreleaser --version
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 

@@ -1,0 +1,66 @@
+site_name: gotmpl
+site_url: https://gotmpl.dev
+site_description: The power of Go templates, without compromise.
+
+repo_name: gotmpl/gotmpl
+repo_url: https://github.com/gotmpl/gotmpl
+
+edit_uri: edit/main/docs
+
+theme:
+  name: material
+  logo: static/logo.png
+  favicon: static/favicon.ico
+  icon:
+    admonition:
+      example: material/professional-hexagon
+    annotation: material/star-four-points-circle
+  custom_dir: docs/overrides
+  language: en
+  features:
+    - announce.dismiss
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - content.tabs.link
+  palette:
+    - media: "(prefers-color-scheme: light)" # Light mode
+      scheme: default
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)" # Dark mode
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/lightbulb
+        name: Switch to light mode
+  include_search_page: false
+  search_index_only: true
+
+nav:
+  - Getting Started:
+    - Introduction: introduction.md
+    - Installation: installation.md
+    - Usage: usage.md
+  - Features:
+    - Environment: features/environment.md
+    - Functions: features/functions.md
+  - Development:
+    # - Releases: development/releases.md
+    - Roadmap: development/roadmap.md
+not_in_nav: index.md
+
+copyright: >
+  Made with 🩶 by the
+  <a href="https://github.com/gotmpl/gotmpl/graphs/contributors" target="_blank" rel="noopener">
+    gotmpl contributors
+  </a>

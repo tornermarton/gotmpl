@@ -10,6 +10,9 @@
         "git-cliff",
         "cloudsmith-cli"
       ]
+    },
+    "ghcr.io/devcontainers-extra/features/mkdocs:2": {
+      "plugins": "mkdocs-material mkdocs-material-extensions"
     }
   }
 }

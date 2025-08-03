@@ -1,4 +1,19 @@
 
+<!-- 1.0.0 -->
+
+# 1.0.0 (2025-08-03)
+
+>[!NOTE]
+>This is a list of all notable improvements in this release, if you are interested you can browse the full changelog [here](https://github.com/tornermarton/gotmpl/compare/0.2.0..1.0.0).
+
+## Changes
+
+| Commit | Description |
+| -- | -- |
+| [![2a75b5b6](https://img.shields.io/badge/2a75b5b6-feat-blue)](https://github.com/tornermarton/gotmpl/commit/2a75b5b6c6652f79bbaa380e86a9c9df0ea85b1e) | draft |
+
+<!-- 1.0.0 -->
+
 <!-- 0.2.0 -->
 
 # 0.2.0 (2025-07-28)

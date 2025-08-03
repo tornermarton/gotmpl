@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="gotmpl-logo" width="240px" height="240px"/>
+  <img src="docs/static/logo.png" alt="gotmpl-logo" width="240px" height="240px"/>
   <br>
   <em>Minimal, zero-dependency CLI tool to utilize the power of Go templates in your configuration files.</em>
 </p>
