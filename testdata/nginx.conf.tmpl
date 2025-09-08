@@ -1,19 +1,167 @@
-server {
-  {{- if env "SSL_ENABLED" "true" | boolean }}
-  listen 443 ssl;
-  ssl_certificate         {{ env "SSL_CERT" "/etc/nginx/ssl/server.crt" }};
-  ssl_certificate_key     {{ env "SSL_KEY" "/etc/nginx/ssl/server.key" }};
-  {{- else }}
-  listen 80;
+pid                               /tmp/nginx.pid;
+
+error_log                         /dev/stderr {{ env "NGINX_ERROR_LOG_LEVEL" "error" }};
+
+worker_processes                  {{ env "NGINX_WORKER_PROCESSES" "auto" }};
+
+events {
+  worker_connections              {{ env "NGINX_WORKER_CONNECTIONS" "1024" }};
+}
+
+http {
+  client_body_temp_path           /tmp/client_temp  1 2;
+  proxy_temp_path                 /tmp/proxy_temp   1 2;
+  fastcgi_temp_path               /tmp/fastcgi_temp 1 2;
+  scgi_temp_path                  /tmp/scgi_temp    1 2;
+  uwsgi_temp_path                 /tmp/uwsgi_temp   1 2;
+
+  include                         /etc/nginx/mime.types;
+  default_type                    application/octet-stream;
+
+  log_format                      main '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"';
+  access_log                      /dev/stdout main;
+
+  resolver                        127.0.0.1 [::1]:5353;
+  resolver_timeout                30s;
+
+  sendfile                        on;
+
+  tcp_nopush                      on;
+  tcp_nodelay                     off;
+
+  keepalive_requests              {{ env "NGINX_KEEPALIVE_REQUESTS" "1000" }};
+  keepalive_timeout               {{ env "NGINX_KEEPALIVE_TIMEOUT" "65s" }};
+
+  server_tokens                   off;
+
+  absolute_redirect               off;
+  port_in_redirect                off;
+
+  sub_filter_once                 off;
+  sub_filter_types                *;
+
+  {{ if or (env "NGINX_SSL_ENABLED" "true" | parseBool) (env "NGINX_METRICS_SSL_ENABLED" "false" | parseBool) -}}
+  ### SSL ###
+  ssl_certificate               {{ env "NGINX_SSL_CERT_FILE" "/etc/nginx/ssl/server.crt" }};
+  ssl_certificate_key           {{ env "NGINX_SSL_KEY_FILE" "/etc/nginx/ssl/server.key" }};
+
+  ssl_dhparam                   {{ env "NGINX_SSL_DH_PARAM_FILE" "/etc/nginx/ssl/dhparam.pem" }};
+  ssl_ecdh_curve                {{ env "NGINX_SSL_ECDH_CURVE" "secp384r1" }};
+
+  ssl_protocols                 {{ env "NGINX_SSL_PROTOCOLS" "TLSv1.2 TLSv1.3" }};
+
+  ssl_ciphers                   {{ env "NGINX_SSL_CIPHERS" "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305" }};
+
+  ssl_prefer_server_ciphers     on;
+
+  {{ if env "NGINX_SSL_STAPLING_ENABLED" "true" | parseBool -}}
+  ssl_stapling                  on;
+  ssl_stapling_verify           on;
   {{- end }}
 
-  server_name {{ env "SERVER_NAME" }};
+  ssl_session_cache             shared:SSL:{{ env "NGINX_SSL_SESSION_CACHE_SIZE" "10m" }};ß
+  ssl_session_timeout           {{ env "NGINX_SSL_SESSION_TIMEOUT" "1h" }};
 
-  location / {
-    proxy_pass http://{{ env "UPSTREAM" "dsa" }};
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+  add_header                    Strict-Transport-Security   {{ env "NGINX_HEADER_STRICT_TRANSPORT_SECURITY" "max-age=15768000" }} always;
+  ### SSL ###
+  {{- end }}
+
+  {{ if env "NGINX_GZIP_ENABLED" "true" | parseBool -}}
+  ### GZIP ###
+  gzip                            on;
+  gzip_vary                       on;
+  gzip_proxied                    any;
+  gzip_min_length                 {{ env "NGINX_GZIP_MIN_LENGTH" "256" }};
+  gzip_comp_level                 {{ env "NGINX_GZIP_COMP_LEVEL" "6" }};
+  gzip_types                      {{ env "NGINX_GZIP_TYPES" "text/plain text/css text/xml text/javascript application/javascript application/x-javascript application/wasm application/json application/xml application/xml+rss font/ttf font/otf image/svg+xml" }};
+  ### GZIP ###
+  {{- end }}
+
+  server {
+    {{ if env "NGINX_SSL_ENABLED" "true" | parseBool -}}
+    listen                        {{ env "NGINX_HTTPS_PORT" "8443" }} ssl http2 default_server;
+    listen                        [::]:{{ env "NGINX_HTTPS_PORT" "8443" }} ssl http2 default_server;
+    server_name                   _;
+    {{ else -}}
+    listen                        {{ env "NGINX_HTTP_PORT" "8080" }} default_server;
+    listen                        [::]:{{ env "NGINX_HTTP_PORT" "8080" }} default_server;
+    server_name                   _;
+    {{- end }}
+
+    # TODO: templated CSP base-uri 'self'; require-trusted-types-for 'script'; default-src 'self' 'nonce-12341234'; img-src 'self' data:;
+    sub_filter                    NGINX_CSP_NONCE             $request_id;
+    add_header                    Content-Security-Policy     "base-uri 'self'; trusted-types angular angular#bundler; require-trusted-types-for 'script'; default-src 'self'; script-src 'self' 'nonce-$request_id'; style-src 'self' 'nonce-$request_id'; style-src-attr 'unsafe-inline'; img-src 'self' data:;" always;
+
+    add_header                    X-Content-Type-Options      {{ env "NGINX_HEADER_X_CONTENT_TYPE_OPTIONS" "nosniff" }} always;
+    add_header                    X-Frame-Options             {{ env "NGINX_HEADER_X_FRAME_OPTIONS" "SAMEORIGIN" }} always;
+    add_header                    X-XSS-Protection            {{ env "NGINX_HEADER_X_XSS_PROTECTION" "1; mode=block" }} always;
+
+    root                          /usr/share/nginx/html;
+    index                         index.html;
+
+    location / {
+      try_files                   $uri $uri/ /index.html;
+    }
+
+    {{ if env "NGINX_CACHE_ENABLED" "true" | parseBool -}}
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg|map)$ {
+      access_log                  off;
+
+      add_header                  Cache-Control "public, immutable";
+      expires                     {{ env "NGINX_CACHE_EXPIRES" "1y" }};
+    }
+    {{- end }}
+
+    {{ if env "NGINX_PING_ENABLED" "true" | parseBool -}}
+    location = {{ env "NGINX_PING_LOCATION" "/ping" }} {
+      return                      204;
+    }
+    {{- end }}
+
+    location ~ /\.(?!well-known).* {
+      access_log                  off;
+      log_not_found               off;
+
+      deny                        all;
+    }
+
+    include                       /etc/nginx/conf.d/server/*.conf;
   }
+
+  {{ if env "NGINX_METRICS_ENABLED" "true" | parseBool -}}
+  server {
+    {{ if env "NGINX_METRICS_SSL_ENABLED" "false" | parseBool -}}
+    listen                        {{ env "NGINX_METRICS_HTTPS_PORT" "9443" }} ssl http2 default_server;
+    listen                        [::]:{{ env "NGINX_METRICS_HTTPS_PORT" "9443" }} ssl http2 default_server;
+    server_name                   _;
+    {{ else -}}
+    listen                        {{ env "NGINX_METRICS_HTTP_PORT" "9080" }} default_server;
+    listen                        [::]:{{ env "NGINX_METRICS_HTTP_PORT" "9080" }} default_server;
+    server_name                   _;
+    {{- end }}
+
+    location = {{ env "NGINX_METRICS_LOCATION" "/stub_status" }} {
+      access_log                  off;
+      log_not_found               off;
+
+      allow                       {{ env "NGINX_METRICS_ALLOW_IP" "127.0.0.1" }};
+      deny                        all;
+
+      stub_status;
+    }
+
+    location ~ /\.(?!well-known).* {
+      access_log                  off;
+      log_not_found               off;
+
+      deny                        all;
+    }
+
+    include                       /etc/nginx/conf.d/metrics-server/*.conf;
+  }
+  {{- end }}
+
+  include                         /etc/nginx/conf.d/http/*.conf;
 }
+
+include                         /etc/nginx/conf.d/main/*.conf;
