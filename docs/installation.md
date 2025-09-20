@@ -1,24 +1,30 @@
 ## Package Managers
 
-This section describes the installation of `gotmpl` in a native environment,
-if you want to install it in a [Dockerfile](https://docs.docker.com/build/concepts/dockerfile/)
-please refer to our [Docker](#docker) instructions to create minimal images.
+This section describes the installation of `gotmpl` in a native environment.
+
+!!! tip
+
+    If you want to install it in a [Dockerfile](https://docs.docker.com/build/concepts/dockerfile/) follow our [Docker](#docker) instructions to create minimal images.
 
 ### apk (Alpine)
 
 #### apk
 
 /// tab | Latest
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.alpine.sh' | sudo -E bash
 sudo apk add gotmpl
 ```
+
 ///
 /// tab | Specific
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.alpine.sh' | sudo -E bash
 sudo apk add gotmpl=={{version}}
 ```
+
 ///
 
 ### deb (Debian/Ubuntu)
@@ -26,16 +32,20 @@ sudo apk add gotmpl=={{version}}
 #### apt
 
 /// tab | Latest
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.deb.sh' | sudo -E bash
 sudo apt-get install gotmpl
 ```
+
 ///
 /// tab | Specific
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.deb.sh' | sudo -E bash
 sudo apt-get install gotmpl=={{version}}
 ```
+
 ///
 
 ### rpm (RHEL/CentOS/Fedora)
@@ -43,51 +53,68 @@ sudo apt-get install gotmpl=={{version}}
 #### dnf
 
 /// tab | Latest
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | sudo -E bash
 sudo dnf install gotmpl
 ```
+
 ///
 /// tab | Specific
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | sudo -E bash
 sudo dnf install gotmpl=={{version}}
 ```
+
 ///
 
 #### yum
 
 /// tab | Latest
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | sudo -E bash
 sudo yum install gotmpl
 ```
+
 ///
 /// tab | Specific
+
 ```shell
 curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | sudo -E bash
 sudo yum install gotmpl=={{version}}
 ```
+
 ///
 
 ## Docker
 
 If you want to install this tool to use it in a container follow these
-instructions to achieve minimal images (compact is preferred since it creates
-only one layer, detailed is only for explanation). For building images we
-recommend to pin versions to have stable results.
+instructions to achieve minimal images.
+
+!!! warning
+
+    `Compact` is preferred since it creates only one layer, `Detailed` is only for explanation.
+
+!!! tip
+
+    For building images we recommend pinning versions to have stable results.
 
 #### apk
 
 /// tab | Compact
+
 ```dockerfile
 ARG GOTMPL_VERSION={{version}}
 
 RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.apk.sh' | bash && \
     apk add --no-cache gotmpl==$GOTMPL_VERSION
 ```
+
 ///
 /// tab | Detailed
+
 ```dockerfile
 # Set to install fixed fixed specific version
 ARG GOTMPL_VERSION={{version}}
@@ -101,11 +128,13 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.deb.sh' | bas
 # Install gotmpl
 RUN apk add --no-cache gotmpl==$GOTMPL_VERSION
 ```
+
 ///
 
 #### apt
 
 /// tab | Compact
+
 ```dockerfile
 ARG GOTMPL_VERSION={{version}}
 
@@ -115,8 +144,10 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.deb.sh' | bas
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 ```
+
 ///
 /// tab | Detailed
+
 ```dockerfile
 # Set to install fixed fixed specific version
 ARG GOTMPL_VERSION={{version}}
@@ -136,11 +167,13 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 ```
+
 ///
 
 #### dnf
 
 /// tab | Compact
+
 ```dockerfile
 ARG GOTMPL_VERSION={{version}}
 
@@ -149,8 +182,10 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | bas
     dnf clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 /// tab | Detailed
+
 ```dockerfile
 # Set to install fixed specific version
 ARG GOTMPL_VERSION={{version}}
@@ -168,11 +203,13 @@ RUN dnf install -y --setopt=install_weak_deps=false gotmpl==$GOTMPL_VERSION && \
     dnf clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 
 #### microdnf
 
 /// tab | Compact
+
 ```dockerfile
 ARG GOTMPL_VERSION={{version}}
 
@@ -181,8 +218,10 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | bas
     microdnf clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 /// tab | Detailed
+
 ```dockerfile
 # Set to install fixed specific version
 ARG GOTMPL_VERSION={{version}}
@@ -200,11 +239,13 @@ RUN microdnf install -y --setopt=install_weak_deps=false gotmpl==$GOTMPL_VERSION
     microdnf clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 
 #### yum
 
 /// tab | Compact
+
 ```dockerfile
 ARG GOTMPL_VERSION={{version}}
 
@@ -213,8 +254,10 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/basic/gotmpl/gotmpl/setup.rpm.sh' | bas
     yum clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 /// tab | Detailed
+
 ```dockerfile
 # Set to install fixed specific version
 ARG GOTMPL_VERSION={{version}}
@@ -232,13 +275,17 @@ RUN yum install -y --setopt=tsflags=nodocs gotmpl==$GOTMPL_VERSION && \
     yum clean all && \
     rm -rf /var/cache/yum
 ```
+
 ///
 
 ## GitHub
 
 We release our packages via GitHub Releases and you can install them by
-downloading (and validating) them directly from there. This is only recommended
-if your operating system does not support the package managers above.
+downloading (and validating) them directly from there.
+
+!!! note
+
+    This is only recommended if your operating system does not support the package managers above.
 
 Linux:
 
@@ -254,18 +301,25 @@ VERSION={{version}} ARCH=amd64; wget -O - https://github.com/gotmpl/gotmpl/relea
 
 ## Go
 
-The tool can also be installed via go CLI but this is not recommended and should
-typically be used for development purposes only.
+The tool can also be installed via go CLI.
+
+!!! warning
+
+    This is not recommended and should typically be used for development purposes only.
 
 /// tab | Latest
+
 ```shell
 go install github.com/gotmpl/gotmpl@latest
 ```
+
 ///
 /// tab | Specific
+
 ```shell
 go install github.com/gotmpl/gotmpl@v{{version}}
 ```
+
 ///
 
 Requires Go {{go_version}}.

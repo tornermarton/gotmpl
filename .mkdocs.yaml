@@ -16,8 +16,6 @@ theme:
   logo: static/icon.png
   favicon: static/favicon.ico
   icon:
-    admonition:
-      example: material/professional-hexagon
     annotation: material/star-four-points-circle
   custom_dir: docs/overrides
   language: en
@@ -26,12 +24,12 @@ theme:
     - search.suggest
     - search.highlight
     - search.share
-    - content.code.copy
-    - content.action.edit
     - navigation.instant
     - navigation.tracking
     - navigation.tabs
     - content.tabs.link
+    - content.code.copy
+    - content.action.edit
   palette:
     - media: "(prefers-color-scheme)" # System mode
       toggle:
@@ -41,6 +39,7 @@ theme:
       scheme: default
       primary: black
       accent: indigo
+      example: "#ddd"
       toggle:
         icon: material/light-mode
         name: Switch to dark mode
@@ -48,6 +47,7 @@ theme:
       scheme: slate
       primary: black
       accent: indigo
+      example: "#ddd"
       toggle:
         icon: material/dark-mode
         name: Switch to system mode
@@ -60,15 +60,18 @@ plugins:
 
 markdown_extensions:
   - meta
+  - md_in_html
   - admonition
   - codehilite
   - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.details
+  - pymdownx.saneheaders
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  - pymdownx.blocks.html
   - pymdownx.blocks.tab:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
@@ -84,6 +87,7 @@ nav:
       - Installation: installation.md
       - Usage: usage.md
   - Features:
+      - Variables: features/variables.md
       - Functions: features/functions.md
       - Environments: features/environments.md
   - Development:

@@ -30,12 +30,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - run: python --version
 
       - name: Install Python Dependencies
-        run: pip install mkdocs mkdocs-material mkdocs-material-extensions
+        run: pip install mkdocs mkdocs-material mkdocs-material-extensions mkdocs-macros-plugin
 
       - run: mkdocs --version
 
@@ -48,7 +48,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'site'
+          path: "site"
 
       - name: Deploy Pages
         uses: actions/deploy-pages@v4
