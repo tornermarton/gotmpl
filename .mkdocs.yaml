@@ -60,28 +60,35 @@ plugins:
 
 markdown_extensions:
   - meta
+  - admonition
   - codehilite
-  - pymdownx.details
+  - pymdownx.inlinehilite
   - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.blocks.tab:
       alternate_style: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
   - toc:
+      toc_depth: 3
       permalink: true
 
 nav:
   - Getting Started:
-    - Introduction: introduction.md
-    - Installation: installation.md
-    - Usage: usage.md
+      - Introduction: introduction.md
+      - Installation: installation.md
+      - Usage: usage.md
   - Features:
-    - Environment: features/environment.md
-    - Functions: features/functions.md
+      - Functions: features/functions.md
+      - Environments: features/environments.md
   - Development:
-    - Releases: development/releases.md
-    - Roadmap: development/roadmap.md
+      - Releases: development/releases.md
+      - Roadmap: development/roadmap.md
 not_in_nav: index.md
 
 copyright: >
