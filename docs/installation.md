@@ -307,6 +307,10 @@ The tool can also be installed via go CLI.
 
     This is not recommended and should typically be used for development purposes only.
 
+!!! tip
+
+    To build the CLI tool with Go, make sure you have **Go installed** (version {{go_version}} or newer recommended).
+
 /// tab | Latest
 
 ```shell
@@ -322,8 +326,29 @@ go install github.com/gotmpl/gotmpl@v{{version}}
 
 ///
 
-Requires Go {{go_version}}.
-
 ## Build from Source
 
-To build the CLI tool from source, make sure you have **Go installed** (version {{go_version}} or newer recommended).
+The tool can also be installed by building it directly from source.
+
+!!! tip
+
+    To build the CLI tool from source, make sure you have **Go installed** (version {{go_version}} or newer recommended).
+
+1.  Clone the repository:
+
+    ```shell
+    git clone https://github.com/gotmpl/gotmpl.git
+    cd gotmpl
+    ```
+
+2.  Build the binary:
+
+    ```shell
+    go build -ldflags "-w -s"
+    ```
+
+3.  (Optional) Move the binary to a directory in your `PATH`:
+
+    ```shell
+    sudo mv gotmpl /usr/local/bin/
+    ```
