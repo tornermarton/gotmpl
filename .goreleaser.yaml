@@ -160,11 +160,10 @@ nfpms:
       - apk
     file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://gotmpl.dev
-    # TODO: description
     description: |-
-      Release engineering, simplified.
-      GoReleaser allows you to release easily build, package, publish, and
-      announce to several places.
+      The power of Go templates, without compromise.
+      Minimal, zero-dependency CLI tool to utilize the power of Go templates in
+      your configuration files.
     maintainer: Márton Torner <m@gotmpl.dev>
     license: GPL-3.0-or-later
     vendor: gotmpl
@@ -183,11 +182,10 @@ nfpms:
       - deb
     file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://gotmpl.dev
-    # TODO: description
     description: |-
-      Release engineering, simplified.
-      GoReleaser allows you to release easily build, package, publish, and
-      announce to several places.
+      The power of Go templates, without compromise.
+      Minimal, zero-dependency CLI tool to utilize the power of Go templates in
+      your configuration files.
     maintainer: Márton Torner <m@gotmpl.dev>
     license: GPL-3.0-or-later
     vendor: gotmpl
@@ -206,11 +204,10 @@ nfpms:
       - rpm
     file_name_template: "{{ .ConventionalFileName }}"
     homepage: https://gotmpl.dev
-    # TODO: description
     description: |-
-      Release engineering, simplified.
-      GoReleaser allows you to release easily build, package, publish, and
-      announce to several places.
+      The power of Go templates, without compromise.
+      Minimal, zero-dependency CLI tool to utilize the power of Go templates in
+      your configuration files.
     maintainer: Márton Torner <m@gotmpl.dev>
     license: GPL-3.0-or-later
     vendor: gotmpl
@@ -260,66 +257,41 @@ signs:
       - "--yes"
       - "${artifact}"
     certificate: "${artifact}.pem"
+    signature: "${artifact}.sig"
     output: true
 
-# TODO: docker
-# dockers:
-#   - image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-amd64"
-#     dockerfile: docker.io/gotmpl/gotmpl/Dockerfile
-#     use: buildx
-#     build_flag_templates:
-#       - "--pull"
-#       - "--no-cache"
-#       - "--label=org.opencontainers.image.name={{.ProjectName}}"
-#       - "--label=org.opencontainers.image.version={{.Version}}"
-#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-#       - "--label=org.opencontainers.image.source={{.GitURL}}"
-#       - "--label=org.opencontainers.image.created={{.Date}}"
-#       - "--platform=linux/amd64"
-#     goarch: amd64
-#   - image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-arm64"
-#     dockerfile: docker.io/gotmpl/gotmpl/Dockerfile
-#     use: buildx
-#     build_flag_templates:
-#       - "--pull"
-#       - "--no-cache"
-#       - "--label=org.opencontainers.image.name={{.ProjectName}}"
-#       - "--label=org.opencontainers.image.version={{.Version}}"
-#       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
-#       - "--label=org.opencontainers.image.source={{.GitURL}}"
-#       - "--label=org.opencontainers.image.created={{.Date}}"
-#       - "--platform=linux/arm64"
-#     goarch: arm64
+dockers_v2:
+  - dockerfile: Dockerfile
+    images:
+      - "{{.ProjectName}}/{{.ProjectName}}"
+    tags:
+      - "{{ .Version }}"
+      - "{{ .Major }}.{{ .Minor }}"
+      - "{{ .Major }}"
+      # TODO: only tag latest if we are sure that the version is the latest
+      # - "{{.ProjectName}}/{{.ProjectName}}:latest"
+    platforms:
+      - linux/amd64
+      - linux/arm64
+    labels:
+      "org.opencontainers.image.name": "{{.ProjectName}}"
+      "org.opencontainers.image.version": "{{.Version}}"
+      "org.opencontainers.image.revision": "{{.FullCommit}}"
+      "org.opencontainers.image.source": "{{.GitURL}}"
+    flags:
+      - "--pull"
+      - "--no-cache"
+    extra_files:
+      - dist/
 
-# docker_manifests:
-#   - name_template: "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}"
-#     image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-amd64"
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-arm64"
-#   - name_template: "{{.ProjectName}}/{{.ProjectName}}:{{ .Major }}.{{ .Minor }}"
-#     image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-amd64"
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-arm64"
-#   - name_template: "{{.ProjectName}}/{{.ProjectName}}:{{ .Major }}"
-#     image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-amd64"
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-arm64"
-#   # TODO: only tag latest if we are sure that the version is the latest
-#   - name_template: "{{.ProjectName}}/{{.ProjectName}}:latest"
-#     image_templates:
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-amd64"
-#       - "{{.ProjectName}}/{{.ProjectName}}:{{ .Version }}-arm64"
-
-# docker_signs:
-#   - artifacts: manifests
-#     cmd: cosign
-#     args:
-#       - "sign"
-#       - "--yes"
-#       - "${artifact}@${digest}"
-#     output: true
+docker_signs:
+  - artifacts: all
+    cmd: cosign
+    args:
+      - sign
+      - --yes
+      - ${artifact}@${digest}
+    output: true
 
 # This should be enabled if we start using milestones
 # milestones:
@@ -348,4 +320,4 @@ release:
   name_template: "{{ .Version }}"
   draft: true
   footer: |
-    **Full Changelog**: https://github.com/gotmpl/gotmpl/compare/{{ .PreviousTag }}...{{ .Tag }}
+    **Full Changelog**: {{.GitURL}}/compare/{{ .PreviousTag }}...{{ .Tag }}
