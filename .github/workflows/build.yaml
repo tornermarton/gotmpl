@@ -39,7 +39,7 @@ jobs:
       - run: cosign version
 
       - name: Install Syft
-        uses: anchore/sbom-action/download-syft@v0.20.2
+        uses: anchore/sbom-action/download-syft@v0.20.6
 
       - run: syft version
 
