@@ -35,17 +35,17 @@ For more information, visit: https://github.com/gotmpl/gotmpl
 `)
 	}
 
-	command.Parse(os.Args)
+	command.Parse(os.Args[1:])
 
 	context := &cli.Context{
 		Version: version,
 	}
 
-	switch command.Arg(1) {
+	switch command.Arg(0) {
 	case "render":
-		cmd.Render(command.Args()[2:])
+		cmd.Render(command.Args()[1:])
 	case "version":
-		cmd.Version(command.Args()[2:], context)
+		cmd.Version(command.Args()[1:], context)
 	default:
 		command.Usage()
 		os.Exit(1)
