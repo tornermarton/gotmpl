@@ -4,11 +4,11 @@
   "features": {
     "ghcr.io/devcontainers/features/go:1": {},
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/nix:1": {
-      "packages": "goreleaser,git-cliff,cloudsmith-cli"
-    },
     "ghcr.io/devcontainers/features/docker-in-docker:2": {
       "moby": false
+    },
+    "ghcr.io/devcontainers/features/nix:1": {
+      "packages": "goreleaser,git-cliff,cloudsmith-cli"
     },
     "ghcr.io/devcontainers-extra/features/syft:1": {},
     "ghcr.io/devcontainers-extra/features/cosign:1": {},
