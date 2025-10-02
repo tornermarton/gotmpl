@@ -266,10 +266,6 @@ dockers_v2:
       - "ghcr.io/{{.ProjectName}}/{{.ProjectName}}"
     tags:
       - "{{ .Version }}"
-      - "{{ .Major }}.{{ .Minor }}"
-      - "{{ .Major }}"
-      # TODO: only tag latest if we are sure that the version is the latest
-      # - "{{.ProjectName}}/{{.ProjectName}}:latest"
     platforms:
       - linux/amd64
       - linux/arm64

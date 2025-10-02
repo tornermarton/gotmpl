@@ -96,6 +96,12 @@ jobs:
           find . -type f -name "*.deb" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push deb --republish ${{ github.repository }}/any-distro/any-version "$1"' _ {}
           find . -type f -name "*.rpm" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push rpm --republish ${{ github.repository }}/any-distro/any-version "$1"' _ {}
 
-          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}
-          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }}.${{ steps.vars.outputs.minor }}
-          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }}
+          # TODO: tag latest if we are sure that the version is the latest
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}-amd64
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}-arm64
+          docker buildx imagetools create \
+            -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }} \
+            -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }}.${{ steps.vars.outputs.minor }} \
+            -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }} \
+            ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}-amd64 \
+            ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}-arm64
