@@ -263,7 +263,7 @@ signs:
 dockers_v2:
   - dockerfile: Dockerfile
     images:
-      - "{{.ProjectName}}/{{.ProjectName}}"
+      - "ghcr.io/{{.ProjectName}}/{{.ProjectName}}"
     tags:
       - "{{ .Version }}"
       - "{{ .Major }}.{{ .Minor }}"

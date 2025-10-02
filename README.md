@@ -32,7 +32,7 @@
 
 ## Documentation
 
-TODO
+Get started by reading our [documentation page][website].
 
 ## Changelog
 
@@ -48,5 +48,6 @@ Before creating your changes please read through our [contributing guidelines][c
   :star: Love the tool? Give this repo a star :star:
 </p>
 
+[website]: https://gotmpl.dev
 [changelog]: CHANGELOG.md
 [contributing]: CONTRIBUTING.md

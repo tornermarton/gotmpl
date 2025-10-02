@@ -51,10 +51,11 @@ jobs:
           install-only: true
 
       - run: goreleaser --version
+
       - run: goreleaser check
       - run: goreleaser healthcheck
 
       - name: Build
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: goreleaser release --clean --snapshot --skip=publish

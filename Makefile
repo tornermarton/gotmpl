@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY : context clean dependencies build install test docs docs-watch changelog snapshot push
+.PHONY : context clean dependencies test build install docs docs-watch changelog snapshot push
 
 VERSION 		:= $(shell git describe --tags --abbrev=0 --exact-match 2> /dev/null)
 THREADS 		:= $(shell nproc 2>/dev/null || echo 1)
@@ -29,7 +29,7 @@ test: clean ## Run tests.
 	go test
 
 build: clean ## Build gotmpl binary.
-	go build -ldflags "$(LDFLAGS)"
+	go build -ldflags "$(LDFLAGS)" -o ./dist/gotmpl
 
 install: clean ## Install gotmpl binary.
 	go install -ldflags "$(LDFLAGS)"

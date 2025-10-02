@@ -3,10 +3,11 @@ name: release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
+  packages: write
   id-token: write
 
 jobs:
@@ -14,6 +15,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - id: vars
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "major=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_OUTPUT
+          echo "minor=$(echo $VERSION | cut -d. -f1-2)" >> $GITHUB_OUTPUT
+
       - run: git --version
 
       - name: Checkout
@@ -25,6 +34,11 @@ jobs:
           go-version-file: "go.mod"
 
       - run: go version
+
+      - name: Install Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - run: docker buildx version
 
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.9.1
@@ -48,7 +62,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - run: python --version
 
@@ -64,13 +78,24 @@ jobs:
 
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: goreleaser release --clean
+
+      - name: Login Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
       - name: Publish
         env:
           CLOUDSMITH_API_KEY: ${{ secrets.CLOUDSMITH_API_KEY }}
         run: |
-          find . -type f -name "*.apk" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push alpine --republish gotmpl/gotmpl-test/alpine/any-version "$1"' _ {}
-          find . -type f -name "*.deb" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push deb --republish gotmpl/gotmpl-test/any-distro/any-version "$1"' _ {}
-          find . -type f -name "*.rpm" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push rpm --republish gotmpl/gotmpl-test/any-distro/any-version "$1"' _ {}
+          find . -type f -name "*.apk" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push alpine --republish ${{ github.repository }}/alpine/any-version "$1"' _ {}
+          find . -type f -name "*.deb" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push deb --republish ${{ github.repository }}/any-distro/any-version "$1"' _ {}
+          find . -type f -name "*.rpm" | xargs -P $(nproc) -n 1 -I{} sh -c 'cloudsmith push rpm --republish ${{ github.repository }}/any-distro/any-version "$1"' _ {}
+
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.version }}
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }}.${{ steps.vars.outputs.minor }}
+          docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.major }}

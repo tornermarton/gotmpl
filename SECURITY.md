@@ -1,13 +1,14 @@
 # Security Policy
 
+<!-- prettier-ignore -->
 >[!IMPORTANT]
->**Do not open a public issue, please report your findigs privately.**
+>**Do not open a public issue, please report your findings privately.**
 
 ## Reporting a Vulnerability
 
 If you discover a security vulnerability in this project, or in our distribution chain:
 
-- Report the vunerability on our GitHub [security policy page][security] with the [Report a vulnerability][advisory] button.
+- Report the vulnerability on our GitHub [security policy page][security] with the [Report a vulnerability][advisory] button.
 - Fill out the form, include as much information as possible to help us reproduce and resolve the issue quickly.
 - We will respond as soon as possible, typically within a few days.
 
@@ -28,8 +29,7 @@ We will announce security fixes in the [release notes][changelog] and update thi
   :lock: Thank you for helping keep this project and the open source community safe! :lock:
 </p>
 
-
-[security]: https://github.com/tornermarton/gotmpl/security
+[security]: https://github.com/gotmpl/gotmpl/security
 [advisory]: https://github.com/gotmpl/gotmpl/security/advisories/new
 [release]: https://github.com/gotmpl/gotmpl/releases/latest
 [changelog]: CHANGELOG.md
